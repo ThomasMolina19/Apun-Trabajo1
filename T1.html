@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Test Interactivo de Pedagogía</title>
+<meta name="description" content="Cuestionario interactivo para descubrir tu enfoque pedagógico, con recursos rápidos y secciones informativas." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+--bg: #0b1020;
+--card: rgba(255,255,255,0.08);
+--muted: #94a3b8;
+--text: #e2e8f0;
+--accent: #7c3aed; /* morado */
+--accent-2: #06b6d4; /* cian */
+--ring: rgba(124, 58, 237, .45);
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body{
+margin: 0;
+font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+color: var(--text);
+background:
+radial-gradient(1200px 600px at 10% 0%, rgba(124, 58, 237,.20), transparent 60%),
+radial-gradient(1000px 500px at 90% 10%, rgba(6, 182, 212,.18), transparent 60%),
+linear-gradient(180deg, #0b1020, #0b1020 60%);
+background-attachment: fixed;
+}
+
+.container{
+max-width: 1100px; margin: 0 auto; padding: 24px; position: relative;
+}
+
+header.hero{
+display: grid; gap: 20px; justify-items: start; margin: 40px 0 40px 0;
+}
+
+.title{
+font-family: "Plus Jakarta Sans", Inter, system-ui; font-weight: 800; letter-spacing: -0.02em; line-height: 1.9;
+font-size: clamp(32px, 5vw, 48px);
+background: linear-gradient(90deg, #fff, #c7d2fe 35%, #a5f3fc 65%);
+-webkit-background-clip: text; background-clip: text; color: transparent; margin: 0;
+}
+.subtitle{ color: var(--muted); max-width: 70ch; margin: 20px 0 0 0; font-size: 16px; line-height: 1.6; }
+
+.toolbar{
+display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 16px;
+}
+
+button, .btn{
+appearance: none; border: 1px solid rgba(255,255,255,0.12); background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+color: var(--text); padding: 10px 14px; border-radius: 14px; font-weight: 600; cursor: pointer;
+transition: transform .08s ease, border-color .2s ease, box-shadow .2s ease; font-size: 14px;
+box-shadow: 0 8px 26px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.06);
+display: inline-flex; align-items: center; gap: 8px; text-decoration: none;
+}
+button:hover, .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,0.28); box-shadow: 0 10px 30px rgba(0,0,0,.3), 0 0 0 6px var(--ring); }
+button.primary{ background: linear-gradient(180deg, var(--accent), #5b21b6); border-color: transparent; box-shadow: 0 10px 30px rgba(124, 58, 237,.5); }
+button.ghost{ background: transparent; }
+
+
+    /* Layout */
+    .grid{
+      display: grid; grid-template-columns: 1.1fr .9fr; gap: 18px; align-items: start;
+    }
+    @media (max-width: 960px){ .grid{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: var(--card); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 18px; backdrop-filter: blur(8px);
+      box-shadow: 0 10px 35px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .card h3{ margin: 4px 0 14px; font-size: 18px; letter-spacing: .3px; }
+
+    /* Progress */
+    .progress{
+      width: 100%; height: 11px; background: rgba(255,255,255,.08); border-radius: 999px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,.12);
+    }
+    .bar{ position: absolute; inset: 0; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); border-radius: inherit; transition: width .35s ease; }
+
+    /* Quiz */
+    .q{ display: grid; gap: 14px; margin: 16px 0 18px; }
+    .q-title{ font-weight: 700; letter-spacing: .2px; }
+    .options{ display: grid; gap: 10px; }
+
+    .opt{
+      padding: 12px 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.04); cursor: pointer; display: grid; gap: 6px;
+      transition: border-color .2s ease, background .2s ease, transform .05s ease; position: relative;
+    }
+    .opt:hover{ border-color: rgba(255,255,255,.3); background: rgba(255,255,255,.07); }
+    .opt input{ position: absolute; inset: 0; opacity: 0; }
+    .opt .label{ font-weight: 600; }
+    .opt .desc{ color: var(--muted); font-size: 13px }
+    .opt.selected{ outline: 2px solid transparent; border-color: var(--accent-2); box-shadow: 0 0 0 4px rgba(6,182,212,.25); transform: translateY(-1px); }
+
+    .nav{ display: flex; justify-content: space-between; gap: 10px; margin-top: 10px; }
+    .nav .spacer{ flex: 1; }
+
+    .pill{ font-size: 12px; color: #cbd5e1; background: rgba(124, 58, 237,.22); border: 1px solid rgba(124,58,237,.5); padding: 4px 8px; border-radius: 999px; }
+
+    /* Results */
+    .result{
+      display: none; animation: fade .4s ease forwards;
+    }
+    @keyframes fade{ from{ opacity: 0; transform: translateY(6px) } to{ opacity: 1; transform: translateY(0) } }
+
+    .badge{
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: linear-gradient(90deg, rgba(124, 58, 237,.3), rgba(6,182,212,.25));
+      border: 1px solid rgba(255,255,255,.18); font-weight: 700; letter-spacing: .3px;
+    }
+
+    .grid-2{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 720px){ .grid-2{ grid-template-columns: 1fr; } }
+
+    details{
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.12); border-radius: 14px; padding: 10px 12px;
+    }
+    details summary{ cursor: pointer; font-weight: 700; }
+    details[open]{ box-shadow: 0 0 0 4px var(--ring); }
+
+    .score-list{ list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 8px; }
+    .score-list li{ display: grid; grid-template-columns: 120px 1fr 40px; align-items: center; gap: 8px; font-size: 14px; }
+    .meter{ height: 8px; background: rgba(255,255,255,.1); border-radius: 999px; overflow: hidden; border: 1px solid rgba(255,255,255,.12); }
+    .meter > span{ display: block; height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+
+    /* Info cards */
+    .info-grid{ display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    @media (max-width: 1024px){ .info-grid{ grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 580px){ .info-grid{ grid-template-columns: 1fr; } }
+
+    .info-card{
+      border: 1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04); border-radius: 18px; padding: 14px; display: grid; gap: 8px; position: relative; overflow: hidden;
+    }
+    .info-card h4{ margin: 0; }
+    .info-card p{ margin: 0; color: var(--muted); font-size: 14px }
+    .chip{ font-size: 11px; color: #e5e7eb; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); padding: 3px 8px; border-radius: 999px; }
+
+    footer{ color: var(--muted); font-size: 13px; margin-top: 24px; text-align: center; }
+
+    /* Dark/Light toggle */
+    .theme-toggle{ margin-left: auto }
+    .light{
+      --bg: #f8fafc; --text: #0f172a; --muted: #475569; --card: rgba(15,23,42,.04);
+      background: radial-gradient(1200px 600px at 10% 0%, #ede9fe, transparent 60%), radial-gradient(1000px 500px at 90% 10%, #cffafe, transparent 60%), linear-gradient(180deg, #f8fafc, #f8fafc 60%);
+    }
+    .light .title{ background: linear-gradient(90deg, #0f172a, #334155 40%, #0ea5e9 80%); -webkit-background-clip:text; background-clip:text; color: transparent; }
+    .light .card, .light details{ background: rgba(15,23,42,.035); border-color: rgba(15,23,42,.12); }
+    .light .opt{ background: rgba(15,23,42,.035); border-color: rgba(15,23,42,.14); }
+    .light .meter{ background: rgba(15,23,42,.09); border-color: rgba(15,23,42,.14); }
+    .light .progress{ background: rgba(15,23,42,.09); border-color: rgba(15,23,42,.14); }
+  </style>
+</head>
+<body>
+  <div class="container" id="app">
+    <header class="hero">
+    <h1 class="title">Test Interactivo de Pedagogía</h1>
+    <p class="subtitle">Descubre con un breve cuestionario cuál enfoque pedagógico te representa más (constructivista, conductista, sociocultural o crítico) y recibe recomendaciones prácticas y recursos rápidos. Diseñado para docentes, estudiantes y curiosos de la educación.</p>
+    <div class="toolbar">
+    <button class="primary" id="startBtn">🎓 Comenzar test</button>
+    <button class="ghost" id="resetBtn" title="Reiniciar">↻ Reiniciar</button>
+    <button class="ghost" id="printBtn" title="Imprimir o guardar PDF">🖨️ Imprimir / PDF</button>
+    <span class="pill">10 preguntas · 3–4 min</span>
+    </div>
+    </header>
+
+    <section class="grid">
+      <!-- QUIZ CARD -->
+      <div class="card" id="quizCard">
+        <div style="display:flex; gap:8px; align-items:center; justify-content:space-between; margin-bottom:8px">
+          <h3>Cuestionario</h3>
+          <div class="pill" id="stepTag">Listo para empezar</div>
+        </div>
+        <div class="progress" aria-label="Progreso"><div class="bar" id="bar"></div></div>
+        <div id="questionWrap" class="q"></div>
+        <div class="nav">
+          <button id="prevBtn">◀ Anterior</button>
+          <span class="spacer"></span>
+          <button id="nextBtn">Siguiente ▶</button>
+          <button class="primary" id="finishBtn" style="display:none">Ver resultados ✨</button>
+        </div>
+      </div>
+
+      <!-- RESULTS / INFO -->
+      <div class="card" id="sideCard">
+        <h3>Resultados y recursos</h3>
+        <div id="placeholder" style="color:var(--muted); font-size:14px">Comienza el test para ver aquí tus resultados y recomendaciones.</div>
+        <div class="result" id="result">
+          <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px">
+            <span class="badge" id="topBadge">—</span>
+            <button class="btn" id="shareBtn">🔗 Compartir</button>
+          </div>
+          <p id="summary" style="margin-top:0"></p>
+
+          <details>
+            <summary>🔍 Desglose de puntajes por enfoque</summary>
+            <ul class="score-list" id="scoreList"></ul>
+          </details>
+
+          <details style="margin-top:10px">
+            <summary>🧰 Sugerencias prácticas inmediatas</summary>
+            <ul id="tips" style="margin: 10px 0 0 18px">
+              <!-- tips dinámicos -->
+            </ul>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- INFO SECTION -->
+    <section class="card" style="margin-top:18px">
+      <h3>Fundamentos rápidos</h3>
+      <div class="info-grid">
+        <article class="info-card">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <h4>Constructivismo</h4>
+            <span class="chip">Piaget · Bruner</span>
+          </div>
+          <p>El aprendizaje se construye activamente conectando saberes previos con experiencias nuevas. Destaca la indagación, la resolución de problemas y las situaciones retadoras.</p>
+        </article>
+        <article class="info-card">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <h4>Conductismo</h4>
+            <span class="chip">Skinner</span>
+          </div>
+          <p>El aprendizaje es un cambio de conducta medible. Se apoya en refuerzos, práctica repetida y objetivos observables. Útil para habilidades procedimentales.</p>
+        </article>
+        <article class="info-card">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <h4>Sociocultural</h4>
+            <span class="chip">Vygotsky</span>
+          </div>
+          <p>El aprendizaje surge en la interacción social y el lenguaje. Andamiaje, ZDP y colaboración son claves para mediar el desarrollo cognitivo.</p>
+        </article>
+        <article class="info-card">
+          <div style="display:flex; justify-content:space-between; align-items:center">
+            <h4>Crítica / Liberadora</h4>
+            <span class="chip">Freire</span>
+          </div>
+          <p>Educar es un acto político y dialógico para transformar la realidad. Se prioriza la conciencia crítica, la problematización y la participación.</p>
+        </article>
+      </div>
+    </section>
+
+    <footer>
+      Hecho con ❤️ para la comunidad de Cátedra APUN-50 Años·
+    </footer>
+  </div>
+
+  <script>
+    // ===== DATA =====
+    const QUESTIONS = [
+      { t: "Cuando planifico una clase, lo más importante es...",
+        opts: [
+          { l: "Activar saberes previos y proponer retos", k: "construct" },
+          { l: "Definir objetivos observables y evaluables", k: "behav" },
+          { l: "Diseñar actividades colaborativas y mediadas", k: "socio" },
+          { l: "Vincular problemáticas reales y voces del estudiantado", k: "critical" },
+        ]
+      },
+      { t: "Ante un error frecuente de los estudiantes, yo...",
+        opts: [
+          { l: "Creo nuevas situaciones para que reconstruyan la idea", k: "construct" },
+          { l: "Refuerzo el procedimiento correcto paso a paso", k: "behav" },
+          { l: "Organizo tutorías entre pares y andamiaje", k: "socio" },
+          { l: "Analizo con el grupo qué condiciones llevan al error", k: "critical" },
+        ]
+      },
+      { t: "Sobre la evaluación, prefiero...",
+        opts: [
+          { l: "Rúbricas de desempeño y proyectos", k: "construct" },
+          { l: "Pruebas objetivas y listas de cotejo", k: "behav" },
+          { l: "Co-evaluación y retroalimentación en equipo", k: "socio" },
+          { l: "Evaluación formativa situada y dialógica", k: "critical" },
+        ]
+      },
+      { t: "El rol del docente es principalmente...",
+        opts: [
+          { l: "Diseñador de experiencias y mediador cognitivo", k: "construct" },
+          { l: "Instructor que guía hacia la competencia", k: "behav" },
+          { l: "Facilitador de interacciones y cultura", k: "socio" },
+          { l: "Sujetx que problematiza y construye diálogo", k: "critical" },
+        ]
+      },
+      { t: "En una actividad ideal, el estudiantado...",
+        opts: [
+          { l: "Explora, prueba, se equivoca y reconstruye", k: "construct" },
+          { l: "Practica con retroalimentación inmediata", k: "behav" },
+          { l: "Trabaja en equipo con roles claros", k: "socio" },
+          { l: "Investiga una problemática local", k: "critical" },
+        ]
+      },
+      { t: "Cuando introduzco un concepto nuevo...",
+        opts: [
+          { l: "Parto de situaciones cercanas y modelos mentales", k: "construct" },
+          { l: "Explico, ejemplifico y ejercito", k: "behav" },
+          { l: "Dialogo y construyo significados compartidos", k: "socio" },
+          { l: "Conecto con preguntas éticas y sociales", k: "critical" },
+        ]
+      },
+      { t: "Respecto a la disciplina en el aula...",
+        opts: [
+          { l: "Acuerdos construidos y sentido de pertenencia", k: "construct" },
+          { l: "Normas claras con consecuencias consistentes", k: "behav" },
+          { l: "Cultura de apoyo y responsabilidad colectiva", k: "socio" },
+          { l: "Análisis de poder y convivencia democrática", k: "critical" },
+        ]
+      },
+      { t: "La tecnología en mi clase debe...",
+        opts: [
+          { l: "Permitir exploración y simulación significativa", k: "construct" },
+          { l: "Acelerar la práctica y dar feedback automático", k: "behav" },
+          { l: "Conectar a la comunidad y colaborar", k: "socio" },
+          { l: "Visibilizar problemáticas y amplificar voces", k: "critical" },
+        ]
+      },
+      { t: "Sobre el contenido curricular...",
+        opts: [
+          { l: "Secuencio desde lo concreto a lo abstracto", k: "construct" },
+          { l: "Priorizo estándares y habilidades básicas", k: "behav" },
+          { l: "Integro proyectos interdisciplinarios", k: "socio" },
+          { l: "Incorporo saberes comunitarios y locales", k: "critical" },
+        ]
+      },
+      { t: "Mi mayor satisfacción docente es...",
+        opts: [
+          { l: "Ver cómo cambian las ideas de mis estudiantes", k: "construct" },
+          { l: "Medir avances claros en el desempeño", k: "behav" },
+          { l: "Sentir la cooperación y el clima de aula", k: "socio" },
+          { l: "Acompañar procesos de conciencia y acción", k: "critical" },
+        ]
+      },
+    ];
+
+    const DESCRIPTIONS = {
+      construct: {
+        name: "Constructivista",
+        summary: "Te orientas a que el estudiantado construya activamente significados. Priorizas experiencias, problemas auténticos y la conexión con saberes previos.",
+        tips: [
+          "Usa organizadores previos y mapas conceptuales.",
+          "Diseña secuencias de indagación con andamiaje.",
+          "Evalúa con rúbricas centradas en desempeño y transferencia."
+        ]
+      },
+      behav: {
+        name: "Conductista",
+        summary: "Apuntas a objetivos observables y medibles. Estructuras la práctica y el refuerzo para lograr precisión y dominio progresivo.",
+        tips: [
+          "Define criterios de éxito muy claros y visibles.",
+          "Combina práctica espaciada con retroalimentación inmediata.",
+          "Gamifica con niveles, insignias y tablas de progreso."
+        ]
+      },
+      socio: {
+        name: "Sociocultural",
+        summary: "Valoras la mediación social del aprendizaje: lenguaje, cultura y colaboración. Te enfocas en la ZDP y en el trabajo cooperativo.",
+        tips: [
+          "Implementa roles rotativos en equipos y tutoría entre pares.",
+          "Usa diarios de aprendizaje y protocolos de conversación.",
+          "Integra productos colectivos (wikis, pósters, podcasts)."
+        ]
+      },
+      critical: {
+        name: "Crítica / Liberadora",
+        summary: "Entiendes la educación como práctica de libertad. Promueves la lectura del mundo, el diálogo y la acción transformadora.",
+        tips: [
+          "Inicia proyectos con una problemática situada.",
+          "Incluye voces de la comunidad y co-diseño con estudiantes.",
+          "Evalúa formativamente con autoevaluaciones dialógicas."
+        ]
+      }
+    };
+
+    // ===== STATE =====
+    const state = {
+      i: -1,
+      answers: Array(QUESTIONS.length).fill(null),
+      scores: { construct: 0, behav: 0, socio: 0, critical: 0 },
+      theme: localStorage.getItem('pg-theme') || 'dark'
+    };
+
+    // ===== ELEMENTS =====
+    const els = {
+      bar: document.getElementById('bar'),
+      questionWrap: document.getElementById('questionWrap'),
+      stepTag: document.getElementById('stepTag'),
+      next: document.getElementById('nextBtn'),
+      prev: document.getElementById('prevBtn'),
+      finish: document.getElementById('finishBtn'),
+      start: document.getElementById('startBtn'),
+      reset: document.getElementById('resetBtn'),
+      print: document.getElementById('printBtn'),
+      theme: document.getElementById('themeBtn'),
+      placeholder: document.getElementById('placeholder'),
+      result: document.getElementById('result'),
+      topBadge: document.getElementById('topBadge'),
+      scoreList: document.getElementById('scoreList'),
+      summary: document.getElementById('summary'),
+      tips: document.getElementById('tips'),
+      share: document.getElementById('shareBtn'),
+      app: document.getElementById('app')
+    };
+
+    // ===== HELPERS =====
+    function renderProgress(){
+      const step = Math.max(0, state.i+1);
+      const pct = Math.round((step / QUESTIONS.length) * 100);
+      els.bar.style.width = pct + '%';
+      els.stepTag.textContent = state.i === -1 ? 'Listo para empezar' : `Pregunta ${step} de ${QUESTIONS.length}`;
+    }
+
+    function renderQuestion(){
+      if(state.i < 0){ els.questionWrap.innerHTML = '<p style="color:var(--muted)">Pulsa <b>Comenzar test</b> para iniciar.</p>'; return; }
+      const q = QUESTIONS[state.i];
+      const chosen = state.answers[state.i];
+      const html = `
+        <div class="q-title">${q.t}</div>
+        <div class="options">
+          ${q.opts.map((o, idx)=>{
+            const id = `q${state.i}_opt${idx}`;
+            const selected = chosen === idx ? 'selected' : '';
+            return `
+              <label class="opt ${selected}" for="${id}">
+                <span class="label">${o.l}</span>
+                <span class="desc">${descByKey(o.k)}</span>
+                <input type="radio" name="q${state.i}" id="${id}" ${chosen===idx?'checked':''} data-idx="${idx}" />
+              </label>`
+          }).join('')}
+        </div>`;
+      els.questionWrap.innerHTML = html;
+      Array.from(els.questionWrap.querySelectorAll('input[type="radio"]')).forEach(inp=>{
+        inp.addEventListener('change', (e)=>{
+          state.answers[state.i] = Number(e.target.dataset.idx);
+          Array.from(els.questionWrap.querySelectorAll('.opt')).forEach((el, i)=>{
+            el.classList.toggle('selected', i === state.answers[state.i]);
+          });
+          updateNav();
+        })
+      })
+    }
+
+    function descByKey(k){
+      return {
+        construct: 'Exploración, conexiones previas y problemas auténticos.',
+        behav: 'Objetivos claros, práctica guiada y refuerzo.',
+        socio: 'Interacción social, lenguaje y colaboración.',
+        critical: 'Diálogo, contexto y transformación de la realidad.'
+      }[k]
+    }
+
+    function updateNav(){
+      els.prev.disabled = state.i <= 0;
+      const answered = state.answers[state.i] != null;
+      els.next.style.display = (state.i < QUESTIONS.length - 1) ? 'inline-flex' : 'none';
+      els.finish.style.display = (state.i === QUESTIONS.length - 1) ? 'inline-flex' : 'none';
+      els.next.disabled = !answered;
+      els.finish.disabled = !answered;
+    }
+
+    function compute(){
+      state.scores = { construct: 0, behav: 0, socio: 0, critical: 0 };
+      state.answers.forEach((ansIdx, i)=>{
+        if(ansIdx==null) return;
+        const key = QUESTIONS[i].opts[ansIdx].k;
+        state.scores[key] += 1;
+      });
+      // Determine top
+      const entries = Object.entries(state.scores);
+      entries.sort((a,b)=> b[1]-a[1]);
+      const [topKey, topVal] = entries[0];
+      return { topKey, topVal, entries };
+    }
+
+    function renderResults(){
+      const { topKey, entries } = compute();
+      const top = DESCRIPTIONS[topKey];
+      els.placeholder.style.display = 'none';
+      els.result.style.display = 'block';
+      els.topBadge.textContent = `Tu enfoque principal: ${top.name}`;
+      els.summary.textContent = top.summary;
+
+      // scores
+      els.scoreList.innerHTML = '';
+      const total = QUESTIONS.length;
+      entries.forEach(([k, v])=>{
+        const li = document.createElement('li');
+        li.innerHTML = `<span style="opacity:.9">${DESCRIPTIONS[k].name}</span>
+                        <div class="meter"><span style="width:${(v/total)*100}%"></span></div>
+                        <b style="text-align:right">${v}</b>`;
+        els.scoreList.appendChild(li);
+      });
+
+      // tips
+      els.tips.innerHTML = '';
+      DESCRIPTIONS[topKey].tips.forEach(t=>{
+        const li = document.createElement('li'); li.textContent = t; els.tips.appendChild(li);
+      });
+    }
+
+    function shareResults(){
+      const { topKey } = compute();
+      const name = DESCRIPTIONS[topKey].name;
+      const text = `Mi enfoque pedagógico predominante es ${name}. ¿Y el tuyo?`;
+      const url = location.href;
+      if(navigator.share){ navigator.share({ title: 'Test de Pedagogía', text, url }).catch(()=>{}); }
+      else{ navigator.clipboard.writeText(`${text} | ${url}`).then(()=>{ alert('Texto copiado al portapapeles ✅'); }); }
+    }
+
+    function setTheme(mode){
+      state.theme = mode; localStorage.setItem('pg-theme', mode);
+      document.body.classList.toggle('light', mode==='light');
+    }
+
+    // ===== EVENTS =====
+    els.start.addEventListener('click', ()=>{ state.i = 0; renderProgress(); renderQuestion(); updateNav(); });
+    els.next.addEventListener('click', ()=>{ if(state.i < QUESTIONS.length-1){ state.i++; renderProgress(); renderQuestion(); updateNav(); } });
+    els.prev.addEventListener('click', ()=>{ if(state.i>0){ state.i--; renderProgress(); renderQuestion(); updateNav(); } });
+    els.finish.addEventListener('click', ()=>{ if(state.answers[state.i]==null) return; renderResults(); });
+
+    els.reset.addEventListener('click', ()=>{
+      state.i = -1; state.answers = Array(QUESTIONS.length).fill(null); state.scores = { construct:0, behav:0, socio:0, critical:0 };
+      els.questionWrap.innerHTML = '<p style="color:var(--muted)">Pulsa <b>Comenzar test</b> para iniciar.</p>';
+      els.result.style.display = 'none'; els.placeholder.style.display = 'block';
+      renderProgress(); updateNav();
+    });
+
+    els.print.addEventListener('click', ()=> window.print());
+    els.share.addEventListener('click', shareResults);
+
+    els.theme.addEventListener('click', ()=> setTheme(state.theme==='light' ? 'dark' : 'light'));
+
+    // init
+    renderProgress(); renderQuestion(); updateNav(); setTheme(state.theme);
+  </script>
+</body>
+</html>
